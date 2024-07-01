@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('unselected_files', function (Blueprint $table) {
+        Schema::create('departments', function (Blueprint $table) {
             $table->id();
-            $table->date('date');
-            $table->string('type');
-            $table->string('number');
-            $table->string('file_path');
-            $table->foreignId('department_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->text('info');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('unselected_files');
+        Schema::dropIfExists('departments');
     }
 };

@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->date('date');
             $table->string('type');
-            $table->integer('number');
+            $table->string('number');
             $table->string('file_path');
+            $table->foreignId('department_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('company_documents', function (Blueprint $table) {
             $table->id();
+            $table->date('date');
+            $table->string('type');
+            $table->string('number');
+            $table->string('file_path');
+            $table->foreignId('department_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
