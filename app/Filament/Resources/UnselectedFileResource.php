@@ -2,23 +2,26 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Forms;
+use Filament\Tables;
+use Filament\Forms\Form;
+use App\Models\Department;
+use Filament\Tables\Table;
+use App\Models\UnselectedFile;
+use Filament\Forms\Components;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Resources\Concerns\Translatable;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UnselectedFileResource\Pages;
 use App\Filament\Resources\UnselectedFileResource\RelationManagers;
-use App\Models\UnselectedFile;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Models\Department;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components;
-use Filament\Tables\Filters\SelectFilter;
 
 class UnselectedFileResource extends Resource
 {
+
+    use Translatable;
     protected static ?string $model = UnselectedFile::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -27,13 +30,15 @@ class UnselectedFileResource extends Resource
     {
         $form->schema([
             FileUpload::make('file_path')
-            ->label('Upload File')
-            ->directory('UnselectedFile'),
+                ->label('Upload File')
+                ->directory('UnselectedFile'),
             Forms\Components\DatePicker::make('date')->required(),
             Forms\Components\TextInput::make('type')->required(),
             Forms\Components\TextInput::make('number')->required(),
             Forms\Components\Select::make('department_id')
                 ->relationship('Department', 'name')
+                ->getOptionLabelFromRecordUsing(fn (Department $record) => $record->name)
+                ->preload()
                 ->searchable()
                 ->required(),
         ]);

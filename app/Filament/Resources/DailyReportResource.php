@@ -9,11 +9,12 @@ use App\Models\Department;
 use Filament\Tables\Table;
 use App\Models\DailyReport;
 use Filament\Forms\Components;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Resources\Resource;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Resources\Concerns\Translatable;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\DailyReportResource\Pages;
 use App\Filament\Resources\DailyReportResource\RelationManagers;
@@ -21,6 +22,8 @@ use App\Filament\Resources\DailyReportResource\RelationManagers;
 
 class DailyReportResource extends Resource
 {
+
+    use Translatable;
     protected static ?string $model = DailyReport::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -36,6 +39,8 @@ class DailyReportResource extends Resource
             Forms\Components\TextInput::make('number')->required(),
             Forms\Components\Select::make('department_id')
                 ->relationship('Department', 'name')
+                ->getOptionLabelFromRecordUsing(fn (Department $record) => $record->name)
+                ->preload()
                 ->searchable()
                 ->required(),
         ]);

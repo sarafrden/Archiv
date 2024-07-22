@@ -35,4 +35,9 @@ public function UnselectedFiles()
     return $this->hasMany(UnselectedFile::class);
 }
 
+public function Users()
+{
+    return $this->hasMany(User::class);
+}
+
 }

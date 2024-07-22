@@ -2,21 +2,24 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DepartmentResource\Pages;
-use App\Filament\Resources\DepartmentResource\RelationManagers;
-use App\Models\Department;
-use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\User;
 use Filament\Tables;
+use Filament\Forms\Form;
+use App\Models\Department;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Filters\SelectFilter;
+use App\Filament\Resources\DepartmentResource\Pages;
+use Filament\Resources\RelationManagers\Concerns\Translatable;
+use App\Filament\Resources\DepartmentResource\RelationManagers;
 
 class DepartmentResource extends Resource
 {
+
+    use Translatable;
     protected static ?string $model = Department::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -47,7 +50,7 @@ class DepartmentResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('user_id')
-                    ->label('User')
+                    ->label('Manager')
                     ->relationship('User', 'name')
                     ->options(User::all()->pluck('name', 'id')->toArray()),
             ])

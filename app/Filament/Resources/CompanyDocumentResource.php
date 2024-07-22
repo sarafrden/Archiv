@@ -16,9 +16,12 @@ use App\Models\Department;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Resources\Concerns\Translatable;
 
 class CompanyDocumentResource extends Resource
 {
+
+    use Translatable;
     protected static ?string $model = CompanyDocument::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -27,13 +30,15 @@ class CompanyDocumentResource extends Resource
     {
         $form->schema([
             FileUpload::make('file_path')
-            ->label('Upload File')
-            ->directory('CompanyDocument'),
+                ->label('Upload File')
+                ->directory('CompanyDocument'),
             Forms\Components\DatePicker::make('date')->required(),
             Forms\Components\TextInput::make('type')->required(),
             Forms\Components\TextInput::make('number')->required(),
             Forms\Components\Select::make('department_id')
                 ->relationship('Department', 'name')
+                ->getOptionLabelFromRecordUsing(fn (Department $record) => $record->name)
+                ->preload()
                 ->searchable()
                 ->required(),
         ]);
