@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use App\Models\Department;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -43,7 +44,7 @@ class UserResource extends Resource
                 Forms\Components\Select::make('type')
                     ->label('Role')
                     ->options([
-                        'Admin'      => 'Admin',
+                        'Admin'      => 'admin',
                         'Manager'      => 'Manager',
                         'Sales'      => 'Sales',
                         'Marketing'      => 'Marketing',
@@ -67,6 +68,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+        ->query(User::query()->DepartmentRestricted()->orderBy('created_at', 'desc'))
             ->columns([
                 TextColumn::make('id')->sortable(),
                 TextColumn::make('name')->sortable()->searchable(),
@@ -86,7 +88,8 @@ class UserResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                    ->visible(fn () => Auth::user()->type === 'admin')
                 ]),
             ]);
     }

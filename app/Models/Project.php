@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class UnselectedFile extends Model
+class Project extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'date', 'type', 'number', 'file_path', 'department_id'
+        'name', 'info', 'department_id'
     ];
 
     public function Department()
@@ -19,6 +19,11 @@ class UnselectedFile extends Model
         return $this->belongsTo(Department::class);
     }
 
+
+    public function DailyReports()
+    {
+        return $this->hasMany(DailyReport::class);
+    }
 
     public function scopeDepartmentRestricted(Builder $query): Builder
     {

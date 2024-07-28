@@ -40,4 +40,9 @@ public function Users()
     return $this->hasMany(User::class);
 }
 
+public function Projects()
+{
+    return $this->hasMany(Project::class);
+}
+
 }

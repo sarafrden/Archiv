@@ -3,11 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Panel;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
 
 class User extends Authenticatable
 {
@@ -51,5 +53,16 @@ class User extends Authenticatable
     public function Department()
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function scopeDepartmentRestricted(Builder $query): Builder
+    {
+        $user = Auth::user();
+
+        if ($user->type !== 'admin') {
+            return $query->where('department_id', $user->department_id);
+        }
+
+        return $query;
     }
 }

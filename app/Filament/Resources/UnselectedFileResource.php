@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use App\Models\UnselectedFile;
 use Filament\Forms\Components;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,7 +41,12 @@ class UnselectedFileResource extends Resource
                 ->getOptionLabelFromRecordUsing(fn (Department $record) => $record->name)
                 ->preload()
                 ->searchable()
-                ->required(),
+                ->required()
+                ->default(fn () => Auth::user()->type === 'admin' ? null : Auth::user()->department_id) // Default to user's department if not admin
+                ->visible(fn () => Auth::user()->type === 'admin'), // Visible only for admin users
+            Forms\Components\Hidden::make('department_id')
+                ->default(fn () => Auth::user()->type === 'admin' ? null : Auth::user()->department_id)
+                ->visible(fn () => Auth::user()->type !== 'admin'), // Hidden field for non-admin users
         ]);
 
         return $form;
@@ -49,6 +55,7 @@ class UnselectedFileResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+        ->query(UnselectedFile::query()->DepartmentRestricted()->orderBy('created_at', 'desc'))
             ->columns([
                 Tables\Columns\TextColumn::make('date')
                     ->searchable()
@@ -77,7 +84,8 @@ class UnselectedFileResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                    ->visible(fn () => Auth::user()->type === 'admin')
                 ]),
             ]);
     }

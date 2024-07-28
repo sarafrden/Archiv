@@ -8,6 +8,7 @@ use App\Models\Department;
 use App\Models\DailyReport;
 use App\Models\User;
 use App\Models\CompanyDocument;
+use App\Models\Project;
 use App\Models\UnselectedFile;
 use Illuminate\Support\Facades\Storage;
 use Faker\Factory as Faker;
@@ -30,6 +31,7 @@ class DailyReportSeeder extends Seeder
                 'email' => strtolower($ut) . 'A@example.com',
                 'password' => Hash::make('password'),
                 'type' => $ut,
+           
 
             ]);
         }
@@ -53,6 +55,11 @@ class DailyReportSeeder extends Seeder
             Storage::put("public/UnselectedFile/sample{$i}.txt", "Sample file content {$i}");
         }
 
+        Project::create([
+            'name' => 'test',
+            'info' => $faker->text(),
+            'department_id' => Department::inRandomOrder()->first()->id,
+        ]);
         // Create daily reports
         for ($i = 0; $i < 20; $i++) {
             DailyReport::create([
@@ -60,6 +67,7 @@ class DailyReportSeeder extends Seeder
                 'type' => $faker->word(),
                 'number' => $faker->randomNumber(),
                 'department_id' => Department::inRandomOrder()->first()->id,
+                'project_id' => Project::first()->id,
                 'file_path' => "DailyReport/sample" . rand(1, 5) . ".txt",
             ]);
             CompanyDocument::create([
